@@ -42,10 +42,10 @@ double** generateCoefficients() {
 	return coefficient;
 }
 
-double** generateDct(double** pixels, double** cosine, double** coefficient) {
-	double** dct = new double*[N];
+int** generateDct(double** pixels, double** cosine, double** coefficient) {
+	int** dct = new int*[N];
 	for (int i = 0; i < N; i++) {
-		dct[i] = new double[N];
+		dct[i] = new int[N];
 	}
 
 	for (int i = 0; i < N; i++) {
@@ -64,7 +64,26 @@ double** generateDct(double** pixels, double** cosine, double** coefficient) {
 	return dct;
 }
 
+void quantizateDct(int** dct, double quantizationTable[N][N]) {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			dct[i][j] = round(dct[i][j] / quantizationTable[i][j]);
+		}
+	}
+}
+
+
+
 void print2DArray(double** arr) {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cout << arr[i][j] << " ";
+		}
+		cout << endl;
+	}
+}
+
+void print2DArray(int** arr) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			cout << arr[i][j] << " ";
@@ -89,6 +108,17 @@ int main(int argc, char** argv) {
 		{148, 155, 136, 155, 152, 147, 147, 136}
 	};
 
+	double quantizationTable[8][8] = {
+		{3, 5, 7, 9, 11, 13, 15, 17},
+		{5, 7, 9, 11, 13, 15, 17, 19},
+		{7, 9, 11, 13, 15, 17, 19, 21},
+		{9, 11, 13, 15, 17, 19, 21, 23},
+		{11, 13, 15, 17, 19, 21, 23, 25},
+		{13, 15, 17, 19, 21, 23, 25, 27},
+		{15, 17, 19, 21, 23, 25, 27, 29},
+		{17, 19, 21, 23, 25, 27, 29, 31}
+	};
+
 	double** pixels = new double*[N];
 	for (int i = 0; i < N; i++) {
 		pixels[i] = new double[N];
@@ -100,6 +130,9 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	double** gct = generateDct(pixels, cosine, coefficient);
-	print2DArray(gct);
+	int** dct = generateDct(pixels, cosine, coefficient);
+
+	quantizateDct(dct, quantizationTable);
+	
+	print2DArray(dct);
 }
