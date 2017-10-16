@@ -258,11 +258,42 @@ int** UnZigZagMatrix(int* m) {
 	return unzigzag;
 }
 
+vector<unsigned char> ConvertQuantizationHeader(int quant[N][N])
+{
+	vector<unsigned char> header;
+	int** q = new int*[N];
+	header.push_back(0xFF);
+header.push_back(0xDB);
+//Bytes After
+header.push_back(0x00);
+header.push_back(0x43);
+//ID
+header.push_back(0x00);
+	for (int i = 0; i < N; i++) {
+		q[i] = new int[N];
+		for(int j = 0; j < N; j++) {
+			q[i][j] = quant[i][j];
+		}
+	}
+	int* zig = ZigZagMatrix(q);
+	for(int i = 0; i < N*N; i++)
+	{
+		header.push_back((unsigned char) zig[i]);
+	}
+	delete [] zig;
+	for(int i = 0; i < N; i++)
+	{
+		delete[] q[i];
+	}
+	delete [] q;
+	return header;
+}
+
 unsigned int GetSize(int num) {
 	if(num < 0) {
 		num *= -1;
 	}
-	unsigned int size = 1;
+	unsigned int size = 0;
 	while(num >= (1 << size)) {
 		size++;
 	}
@@ -304,7 +335,20 @@ vector<RLE> EncodeRLE(int* d) {
 	unsigned int zeroes = 0;
 	int encodingCount = 0;
 	for(int i = 0; i < N * N; i++) {
-		if(d[i] != 0) {
+		if(d[i] != 0 || i == 0) {
+			while(zeroes >= 16) {
+				encoding.push_back(RLE());
+				encoding[encodingCount].runlength = 15;
+				encoding[encodingCount].size = 0;
+				encoding[encodingCount].hex = 
+					encoding[encodingCount].runlength << 4 ^ encoding[encodingCount].size;
+				zeroes -=16;
+				encodingCount++;
+			}
+			if(i == 0)
+			{
+				//d[i] -= 150;
+			}
 			encoding.push_back(RLE());
 			encoding[encodingCount].runlength = zeroes;
 			encoding[encodingCount].size = GetSize(d[i]);
@@ -321,6 +365,7 @@ vector<RLE> EncodeRLE(int* d) {
 	if(zeroes > 0) {
 		encoding.push_back(RLE());
 		encoding[encodingCount].runlength = zeroes;
+		//hex is 00
 	}
 	return encoding;
 }
@@ -351,22 +396,266 @@ vector<bool> RLEToBits(vector<RLE> encoding) {
 	vector<bool> bits;
 	for(int i = 0; i < encoding.size(); i++)
 	{
-		cout << "( " << encoding[i].runlength << " ";
-		cout << ", " <<  encoding[i].size << ") ";
-		cout << HuffmanMap::hmapAC.at(encoding[i].hex) << " ";
-		for(int j = 0; j < encoding[i].amp.size(); j++) {
-			if(encoding[i].amp[j]) {
-				cout << "1";			
+		string huffmanString;
+		if(i == 0) {
+			//cout << "DC " << hex << (int)encoding[i].hex << endl;
+			huffmanString = HuffmanMap::hmapDC.at(encoding[i].hex);
+
+		}
+		else {
+			//cout << "AC " << hex << (int)encoding[i].hex << endl;
+			huffmanString = HuffmanMap::hmapAC.at(encoding[i].hex);
+
+		}
+		for(int j = 0; j < huffmanString.size(); j++) {
+			if(huffmanString[j] == '1') {
+				bits.push_back(true);			
 			}
 			else {
-				cout << "0";
+				bits.push_back(false);
 			}
 		}
-		cout << ", ";
+		bits.insert(bits.end(), encoding[i].amp.begin(), encoding[i].amp.end()); 
 	}
 	return bits;
 }
 
+vector<bool> HuffmanEncode(int** pixels) {
+	int* zigzag = ZigZagMatrix(pixels);
+	
+	vector<RLE> encoding = EncodeRLE(zigzag);
+	//printRLE(encoding);
+	vector<bool> encode = RLEToBits(encoding);
+	delete [] zigzag;
+	return encode;
+}
+
+vector<unsigned char> GetHuffmanDC() {
+	vector<unsigned char> huffmanDC;
+	huffmanDC.push_back(0xff);
+	huffmanDC.push_back(0xc4);
+	huffmanDC.push_back(0x00);
+	huffmanDC.push_back(0x1f);
+	huffmanDC.push_back(0x00);
+	huffmanDC.push_back(0x00);
+	huffmanDC.push_back(0x01);
+	huffmanDC.push_back(0x05);
+	huffmanDC.push_back(0x01);
+	huffmanDC.push_back(0x01);
+	huffmanDC.push_back(0x01);
+	huffmanDC.push_back(0x01);
+	huffmanDC.push_back(0x01);
+	huffmanDC.push_back(0x01);
+	huffmanDC.push_back(0x00);
+	huffmanDC.push_back(0x00);
+	huffmanDC.push_back(0x00);
+	huffmanDC.push_back(0x00);
+	huffmanDC.push_back(0x00);
+	huffmanDC.push_back(0x00);
+	huffmanDC.push_back(0x00);
+	huffmanDC.push_back(0x00);
+	huffmanDC.push_back(0x01);
+	huffmanDC.push_back(0x02);
+	huffmanDC.push_back(0x03);
+	huffmanDC.push_back(0x04);
+	huffmanDC.push_back(0x05);
+	huffmanDC.push_back(0x06);
+	huffmanDC.push_back(0x07);
+	huffmanDC.push_back(0x08);
+	huffmanDC.push_back(0x09);
+	huffmanDC.push_back(0x0a);
+	huffmanDC.push_back(0x0b);
+	return huffmanDC;
+}
+
+vector<unsigned char> GetHuffmanAC() {
+	vector<unsigned char> huffmanAC;
+	huffmanAC.push_back(0xff);
+huffmanAC.push_back(0xc4);
+huffmanAC.push_back(0x00);
+huffmanAC.push_back(0xb5);
+huffmanAC.push_back(0x10);
+huffmanAC.push_back(0x00);
+huffmanAC.push_back(0x02);
+huffmanAC.push_back(0x01);
+huffmanAC.push_back(0x03);
+huffmanAC.push_back(0x03);
+huffmanAC.push_back(0x02);
+huffmanAC.push_back(0x04);
+huffmanAC.push_back(0x03);
+huffmanAC.push_back(0x05);
+huffmanAC.push_back(0x05);
+huffmanAC.push_back(0x04);
+huffmanAC.push_back(0x04);
+huffmanAC.push_back(0x00);
+huffmanAC.push_back(0x00);
+huffmanAC.push_back(0x01);
+huffmanAC.push_back(0x7d);
+huffmanAC.push_back(0x01);
+huffmanAC.push_back(0x02);
+huffmanAC.push_back(0x03);
+huffmanAC.push_back(0x00);
+huffmanAC.push_back(0x04);
+huffmanAC.push_back(0x11);
+huffmanAC.push_back(0x05);
+huffmanAC.push_back(0x12);
+huffmanAC.push_back(0x21);
+huffmanAC.push_back(0x31);
+huffmanAC.push_back(0x41);
+huffmanAC.push_back(0x06);
+huffmanAC.push_back(0x13);
+huffmanAC.push_back(0x51);
+huffmanAC.push_back(0x61);
+huffmanAC.push_back(0x07);
+huffmanAC.push_back(0x22);
+huffmanAC.push_back(0x71);
+huffmanAC.push_back(0x14);
+huffmanAC.push_back(0x32);
+huffmanAC.push_back(0x81);
+huffmanAC.push_back(0x91);
+huffmanAC.push_back(0xa1);
+huffmanAC.push_back(0x08);
+huffmanAC.push_back(0x23);
+huffmanAC.push_back(0x42);
+huffmanAC.push_back(0xb1);
+huffmanAC.push_back(0xc1);
+huffmanAC.push_back(0x15);
+huffmanAC.push_back(0x52);
+huffmanAC.push_back(0xd1);
+huffmanAC.push_back(0xf0);
+huffmanAC.push_back(0x24);
+huffmanAC.push_back(0x33);
+huffmanAC.push_back(0x62);
+huffmanAC.push_back(0x72);
+huffmanAC.push_back(0x82);
+huffmanAC.push_back(0x09);
+huffmanAC.push_back(0x0a);
+huffmanAC.push_back(0x16);
+huffmanAC.push_back(0x17);
+huffmanAC.push_back(0x18);
+huffmanAC.push_back(0x19);
+huffmanAC.push_back(0x1a);
+huffmanAC.push_back(0x25);
+huffmanAC.push_back(0x26);
+huffmanAC.push_back(0x27);
+huffmanAC.push_back(0x28);
+huffmanAC.push_back(0x29);
+huffmanAC.push_back(0x2a);
+huffmanAC.push_back(0x34);
+huffmanAC.push_back(0x35);
+huffmanAC.push_back(0x36);
+huffmanAC.push_back(0x37);
+huffmanAC.push_back(0x38);
+huffmanAC.push_back(0x39);
+huffmanAC.push_back(0x3a);
+huffmanAC.push_back(0x43);
+huffmanAC.push_back(0x44);
+huffmanAC.push_back(0x45);
+huffmanAC.push_back(0x46);
+huffmanAC.push_back(0x47);
+huffmanAC.push_back(0x48);
+huffmanAC.push_back(0x49);
+huffmanAC.push_back(0x4a);
+huffmanAC.push_back(0x53);
+huffmanAC.push_back(0x54);
+huffmanAC.push_back(0x55);
+huffmanAC.push_back(0x56);
+huffmanAC.push_back(0x57);
+huffmanAC.push_back(0x58);
+huffmanAC.push_back(0x59);
+huffmanAC.push_back(0x5a);
+huffmanAC.push_back(0x63);
+huffmanAC.push_back(0x64);
+huffmanAC.push_back(0x65);
+huffmanAC.push_back(0x66);
+huffmanAC.push_back(0x67);
+huffmanAC.push_back(0x68);
+huffmanAC.push_back(0x69);
+huffmanAC.push_back(0x6a);
+huffmanAC.push_back(0x73);
+huffmanAC.push_back(0x74);
+huffmanAC.push_back(0x75);
+huffmanAC.push_back(0x76);
+huffmanAC.push_back(0x77);
+huffmanAC.push_back(0x78);
+huffmanAC.push_back(0x79);
+huffmanAC.push_back(0x7a);
+huffmanAC.push_back(0x83);
+huffmanAC.push_back(0x84);
+huffmanAC.push_back(0x85);
+huffmanAC.push_back(0x86);
+huffmanAC.push_back(0x87);
+huffmanAC.push_back(0x88);
+huffmanAC.push_back(0x89);
+huffmanAC.push_back(0x8a);
+huffmanAC.push_back(0x92);
+huffmanAC.push_back(0x93);
+huffmanAC.push_back(0x94);
+huffmanAC.push_back(0x95);
+huffmanAC.push_back(0x96);
+huffmanAC.push_back(0x97);
+huffmanAC.push_back(0x98);
+huffmanAC.push_back(0x99);
+huffmanAC.push_back(0x9a);
+huffmanAC.push_back(0xa2);
+huffmanAC.push_back(0xa3);
+huffmanAC.push_back(0xa4);
+huffmanAC.push_back(0xa5);
+huffmanAC.push_back(0xa6);
+huffmanAC.push_back(0xa7);
+huffmanAC.push_back(0xa8);
+huffmanAC.push_back(0xa9);
+huffmanAC.push_back(0xaa);
+huffmanAC.push_back(0xb2);
+huffmanAC.push_back(0xb3);
+huffmanAC.push_back(0xb4);
+huffmanAC.push_back(0xb5);
+huffmanAC.push_back(0xb6);
+huffmanAC.push_back(0xb7);
+huffmanAC.push_back(0xb8);
+huffmanAC.push_back(0xb9);
+huffmanAC.push_back(0xba);
+huffmanAC.push_back(0xc2);
+huffmanAC.push_back(0xc3);
+huffmanAC.push_back(0xc4);
+huffmanAC.push_back(0xc5);
+huffmanAC.push_back(0xc6);
+huffmanAC.push_back(0xc7);
+huffmanAC.push_back(0xc8);
+huffmanAC.push_back(0xc9);
+huffmanAC.push_back(0xca);
+huffmanAC.push_back(0xd2);
+huffmanAC.push_back(0xd3);
+huffmanAC.push_back(0xd4);
+huffmanAC.push_back(0xd5);
+huffmanAC.push_back(0xd6);
+huffmanAC.push_back(0xd7);
+huffmanAC.push_back(0xd8);
+huffmanAC.push_back(0xd9);
+huffmanAC.push_back(0xda);
+huffmanAC.push_back(0xe1);
+huffmanAC.push_back(0xe2);
+huffmanAC.push_back(0xe3);
+huffmanAC.push_back(0xe4);
+huffmanAC.push_back(0xe5);
+huffmanAC.push_back(0xe6);
+huffmanAC.push_back(0xe7);
+huffmanAC.push_back(0xe8);
+huffmanAC.push_back(0xe9);
+huffmanAC.push_back(0xea);
+huffmanAC.push_back(0xf1);
+huffmanAC.push_back(0xf2);
+huffmanAC.push_back(0xf3);
+huffmanAC.push_back(0xf4);
+huffmanAC.push_back(0xf5);
+huffmanAC.push_back(0xf6);
+huffmanAC.push_back(0xf7);
+huffmanAC.push_back(0xf8);
+huffmanAC.push_back(0xf9);
+huffmanAC.push_back(0xfa);
+	return huffmanAC;
+}
+/**
 int main(int argc, char** argv) {
 	int x[8][8] = {
 		{  -78,  104,    6,   -1,    0,    0,    0,    0},
@@ -390,9 +679,13 @@ int main(int argc, char** argv) {
 		}
 	}
 
-
-	int* zigzag = ZigZagMatrix(pixels);
+	vector<bool> full = HuffmanEncode(pixels);
 	
-	vector<RLE> encoding = EncodeRLE(zigzag);
-	printRLE(encoding);
-}
+	for(int i = 0; i < full.size(); i++) {
+		if(full[i])
+			cout << "1";
+		else
+			cout << "0";
+	}
+	cout << endl;
+}**/
