@@ -402,15 +402,15 @@ int main(int argc, char** argv) {
 			if(h == 5*8 && w == 19* 8) {
 				for(int dctY = 0; dctY < N; dctY++) {
 					for(int dctX = 0; dctX < N; dctX++) {
-						cout << dct[dctY][dctX] << " ";
+						//cout << dct[dctY][dctX] << " ";
 					}
-					cout << endl;
+					//cout << endl;
 				}
-				cout << endl;
+				//cout << endl;
 				for(int m = 0; m < encode.size(); m++) {
-					cout << (int)encode[m];
+					//cout << (int)encode[m];
 				}
-				cout << endl << endl;
+				//cout << endl << endl;
 			}
 			huffmanEncode.insert(huffmanEncode.end(), encode.begin(), encode.end());
 
@@ -430,11 +430,11 @@ int main(int argc, char** argv) {
 					grayscaleArray[i+h][w+j] = (unsigned char)pixels2[i][j];
 					if(h == 24*8 && w == 19* 8)
 					{
-						cout << pixels2[i][j] << "   ";
+						//cout << pixels2[i][j] << "   ";
 					}
 				}
-				if(h == 24*8 && w == 19* 8)
-					cout << endl;
+				//if(h == 24*8 && w == 19* 8)
+					//cout << endl;
 			}
 
 			for (int i = 0; i < N; i++) {
@@ -475,7 +475,7 @@ int main(int argc, char** argv) {
 	}
 	file.close();
 
-	showGSBMP(grayscaleArray);
+	//showGSBMP(grayscaleArray);
 	// double x[8][8] = {
 	// 	{140, 144, 147, 140, 140, 155, 179, 175},
 	// 	{144, 152, 140, 147, 140, 148, 167, 179},
