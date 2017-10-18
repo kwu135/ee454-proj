@@ -293,10 +293,15 @@ vector<unsigned char> CreateJPEGVector(vector<unsigned char> quant, vector<unsig
 }
 
 int main(int argc, char** argv) {
+	if(argc < 3)
+	{
+		cout << "Arguements: fullCompression [input] [output]" << endl;
+		return 0;
+	}
 
 
 	unsigned char grayscaleArray[SIZE][SIZE]; 
-	readGSBMP("elephant.bmp", grayscaleArray);
+	readGSBMP(argv[1], grayscaleArray);
 
 
 	int width = 256; 
@@ -468,7 +473,7 @@ int main(int argc, char** argv) {
 	// }
 	vector<unsigned char> jpeg = CreateJPEGVector(quantHeader, bytes);
 	
-	ofstream file("file.jpg");
+	ofstream file(argv[2]);
 	for(int i = 0; i < jpeg.size(); i++)
 	{
 		file << jpeg[i];
