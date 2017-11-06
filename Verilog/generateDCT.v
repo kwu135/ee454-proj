@@ -12,31 +12,31 @@ module generateDCT(pixels_0, pixels_1, pixels_2, pixels_3, pixels_4,
 
 	input Clk;
 	input Reset;
-	output[255:0] dct_0;
-	output[255:0] dct_1;
-	output[255:0] dct_2;
-	output[255:0] dct_3;
-	output[255:0] dct_4;
-	output[255:0] dct_5;
-	output[255:0] dct_6;
-	output[255:0] dct_7;
+	output[95:0] dct_0;
+	output[95:0] dct_1;
+	output[95:0] dct_2;
+	output[95:0] dct_3;
+	output[95:0] dct_4;
+	output[95:0] dct_5;
+	output[95:0] dct_6;
+	output[95:0] dct_7;
 
 	output Done;
 	
 	reg[7:0] pixels[7:0][7:0];
-	reg[31:0] dct_reg[7:0][7:0];
+	reg[11:0] dct_reg[7:0][7:0];
 	
-	reg[2:0] i;
+	reg[3:0] i;
 
-	reg[31:0] s0[7:0];
-	reg[31:0] s1[7:0]; 
-	reg[31:0] s2[7:0]; 
-	reg[31:0] s3[7:0]; 
+	reg[11:0] s0[7:0];
+	reg[11:0] s1[7:0]; 
+	reg[11:0] s2[7:0]; 
+	reg[11:0] s3[7:0]; 
 
-	reg[31:0] d0[7:0]; 
-	reg[31:0] d1[7:0]; 
-	reg[31:0] d2[7:0]; 
-	reg[31:0] d3[7:0];
+	reg[11:0] d0[7:0]; 
+	reg[11:0] d1[7:0]; 
+	reg[11:0] d2[7:0]; 
+	reg[11:0] d3[7:0];
 
 	reg [6:0] state;
 
@@ -49,86 +49,86 @@ module generateDCT(pixels_0, pixels_1, pixels_2, pixels_3, pixels_4,
 
 	assign Done = (state == DONE);
 
-	assign dct_0[0*32+:32] = dct_reg[0][0];
-	assign dct_0[1*32+:32] = dct_reg[0][1];
-	assign dct_0[2*32+:32] = dct_reg[0][2];
-	assign dct_0[3*32+:32] = dct_reg[0][3];
-	assign dct_0[4*32+:32] = dct_reg[0][4];
-	assign dct_0[5*32+:32] = dct_reg[0][5];
-	assign dct_0[6*32+:32] = dct_reg[0][6];
-	assign dct_0[7*32+:32] = dct_reg[0][7];
+	assign dct_0[0*12+:12] = dct_reg[0][0];
+	assign dct_0[1*12+:12] = dct_reg[0][1];
+	assign dct_0[2*12+:12] = dct_reg[0][2];
+	assign dct_0[3*12+:12] = dct_reg[0][3];
+	assign dct_0[4*12+:12] = dct_reg[0][4];
+	assign dct_0[5*12+:12] = dct_reg[0][5];
+	assign dct_0[6*12+:12] = dct_reg[0][6];
+	assign dct_0[7*12+:12] = dct_reg[0][7];
 
-	assign dct_1[0*32+:32] = dct_reg[1][0];
-	assign dct_1[1*32+:32] = dct_reg[1][1];
-	assign dct_1[2*32+:32] = dct_reg[1][2];
-	assign dct_1[3*32+:32] = dct_reg[1][3];
-	assign dct_1[4*32+:32] = dct_reg[1][4];
-	assign dct_1[5*32+:32] = dct_reg[1][5];
-	assign dct_1[6*32+:32] = dct_reg[1][6];
-	assign dct_1[7*32+:32] = dct_reg[1][7];
+	assign dct_1[0*12+:12] = dct_reg[1][0];
+	assign dct_1[1*12+:12] = dct_reg[1][1];
+	assign dct_1[2*12+:12] = dct_reg[1][2];
+	assign dct_1[3*12+:12] = dct_reg[1][3];
+	assign dct_1[4*12+:12] = dct_reg[1][4];
+	assign dct_1[5*12+:12] = dct_reg[1][5];
+	assign dct_1[6*12+:12] = dct_reg[1][6];
+	assign dct_1[7*12+:12] = dct_reg[1][7];
 
-	assign dct_2[0*32+:32] = dct_reg[2][0];
-	assign dct_2[1*32+:32] = dct_reg[2][1];
-	assign dct_2[2*32+:32] = dct_reg[2][2];
-	assign dct_2[3*32+:32] = dct_reg[2][3];
-	assign dct_2[4*32+:32] = dct_reg[2][4];
-	assign dct_2[5*32+:32] = dct_reg[2][5];
-	assign dct_2[6*32+:32] = dct_reg[2][6];
-	assign dct_2[7*32+:32] = dct_reg[2][7];
+	assign dct_2[0*12+:12] = dct_reg[2][0];
+	assign dct_2[1*12+:12] = dct_reg[2][1];
+	assign dct_2[2*12+:12] = dct_reg[2][2];
+	assign dct_2[3*12+:12] = dct_reg[2][3];
+	assign dct_2[4*12+:12] = dct_reg[2][4];
+	assign dct_2[5*12+:12] = dct_reg[2][5];
+	assign dct_2[6*12+:12] = dct_reg[2][6];
+	assign dct_2[7*12+:12] = dct_reg[2][7];
 
-	assign dct_3[0*32+:32] = dct_reg[3][0];
-	assign dct_3[1*32+:32] = dct_reg[3][1];
-	assign dct_3[2*32+:32] = dct_reg[3][2];
-	assign dct_3[3*32+:32] = dct_reg[3][3];
-	assign dct_3[4*32+:32] = dct_reg[3][4];
-	assign dct_3[5*32+:32] = dct_reg[3][5];
-	assign dct_3[6*32+:32] = dct_reg[3][6];
-	assign dct_3[7*32+:32] = dct_reg[3][7];
+	assign dct_3[0*12+:12] = dct_reg[3][0];
+	assign dct_3[1*12+:12] = dct_reg[3][1];
+	assign dct_3[2*12+:12] = dct_reg[3][2];
+	assign dct_3[3*12+:12] = dct_reg[3][3];
+	assign dct_3[4*12+:12] = dct_reg[3][4];
+	assign dct_3[5*12+:12] = dct_reg[3][5];
+	assign dct_3[6*12+:12] = dct_reg[3][6];
+	assign dct_3[7*12+:12] = dct_reg[3][7];
 
-	assign dct_4[0*32+:32] = dct_reg[4][0];
-	assign dct_4[1*32+:32] = dct_reg[4][1];
-	assign dct_4[2*32+:32] = dct_reg[4][2];
-	assign dct_4[3*32+:32] = dct_reg[4][3];
-	assign dct_4[4*32+:32] = dct_reg[4][4];
-	assign dct_4[5*32+:32] = dct_reg[4][5];
-	assign dct_4[6*32+:32] = dct_reg[4][6];
-	assign dct_4[7*32+:32] = dct_reg[4][7];
+	assign dct_4[0*12+:12] = dct_reg[4][0];
+	assign dct_4[1*12+:12] = dct_reg[4][1];
+	assign dct_4[2*12+:12] = dct_reg[4][2];
+	assign dct_4[3*12+:12] = dct_reg[4][3];
+	assign dct_4[4*12+:12] = dct_reg[4][4];
+	assign dct_4[5*12+:12] = dct_reg[4][5];
+	assign dct_4[6*12+:12] = dct_reg[4][6];
+	assign dct_4[7*12+:12] = dct_reg[4][7];
 
-	assign dct_5[0*32+:32] = dct_reg[5][0];
-	assign dct_5[1*32+:32] = dct_reg[5][1];
-	assign dct_5[2*32+:32] = dct_reg[5][2];
-	assign dct_5[3*32+:32] = dct_reg[5][3];
-	assign dct_5[4*32+:32] = dct_reg[5][4];
-	assign dct_5[5*32+:32] = dct_reg[5][5];
-	assign dct_5[6*32+:32] = dct_reg[5][6];
-	assign dct_5[7*32+:32] = dct_reg[5][7];
+	assign dct_5[0*12+:12] = dct_reg[5][0];
+	assign dct_5[1*12+:12] = dct_reg[5][1];
+	assign dct_5[2*12+:12] = dct_reg[5][2];
+	assign dct_5[3*12+:12] = dct_reg[5][3];
+	assign dct_5[4*12+:12] = dct_reg[5][4];
+	assign dct_5[5*12+:12] = dct_reg[5][5];
+	assign dct_5[6*12+:12] = dct_reg[5][6];
+	assign dct_5[7*12+:12] = dct_reg[5][7];
 
-	assign dct_6[0*32+:32] = dct_reg[6][0];
-	assign dct_6[1*32+:32] = dct_reg[6][1];
-	assign dct_6[2*32+:32] = dct_reg[6][2];
-	assign dct_6[3*32+:32] = dct_reg[6][3];
-	assign dct_6[4*32+:32] = dct_reg[6][4];
-	assign dct_6[5*32+:32] = dct_reg[6][5];
-	assign dct_6[6*32+:32] = dct_reg[6][6];
-	assign dct_6[7*32+:32] = dct_reg[6][7];
+	assign dct_6[0*12+:12] = dct_reg[6][0];
+	assign dct_6[1*12+:12] = dct_reg[6][1];
+	assign dct_6[2*12+:12] = dct_reg[6][2];
+	assign dct_6[3*12+:12] = dct_reg[6][3];
+	assign dct_6[4*12+:12] = dct_reg[6][4];
+	assign dct_6[5*12+:12] = dct_reg[6][5];
+	assign dct_6[6*12+:12] = dct_reg[6][6];
+	assign dct_6[7*12+:12] = dct_reg[6][7];
 
-	assign dct_7[0*32+:32] = dct_reg[7][0];
-	assign dct_7[1*32+:32] = dct_reg[7][1];
-	assign dct_7[2*32+:32] = dct_reg[7][2];
-	assign dct_7[3*32+:32] = dct_reg[7][3];
-	assign dct_7[4*32+:32] = dct_reg[7][4];
-	assign dct_7[5*32+:32] = dct_reg[7][5];
-	assign dct_7[6*32+:32] = dct_reg[7][6];
-	assign dct_7[7*32+:32] = dct_reg[7][7];
+	assign dct_7[0*12+:12] = dct_reg[7][0];
+	assign dct_7[1*12+:12] = dct_reg[7][1];
+	assign dct_7[2*12+:12] = dct_reg[7][2];
+	assign dct_7[3*12+:12] = dct_reg[7][3];
+	assign dct_7[4*12+:12] = dct_reg[7][4];
+	assign dct_7[5*12+:12] = dct_reg[7][5];
+	assign dct_7[6*12+:12] = dct_reg[7][6];
+	assign dct_7[7*12+:12] = dct_reg[7][7];
 
 	localparam
-	coeff0 = 31'b00000000000000000000000111110110, // 0.49039 * 1024 = 502
-	coeff1 = 31'b00000000000000000000000111011001, // 0.46194 * 1024 = 473
-	coeff2 = 31'b00000000000000000000000110101010, // 0.41573 * 1024 = 426
-	coeff3 = 31'b00000000000000000000000101101010, // 0.35355 * 1024 = 362
-	coeff4 = 31'b00000000000000000000000100011100, // 0.27779 * 1024 = 284
-	coeff5 = 31'b00000000000000000000000011000100, // 0.19134 * 1024 = 196
-	coeff6 = 31'b00000000000000000000000001100100; // 0.09755 * 1024 = 100
+	coeff0 = 12'b000111110110, // 0.49039 * 1024 = 502
+	coeff1 = 12'b000111011001, // 0.46194 * 1024 = 473
+	coeff2 = 12'b000110101010, // 0.41573 * 1024 = 426
+	coeff3 = 12'b000101101010, // 0.35355 * 1024 = 362
+	coeff4 = 12'b000100011100, // 0.27779 * 1024 = 284
+	coeff5 = 12'b000011000100, // 0.19134 * 1024 = 196
+	coeff6 = 12'b000001100100; // 0.09755 * 1024 = 100
 
 	// always (*)
 	// begin
