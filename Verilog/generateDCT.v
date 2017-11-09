@@ -24,19 +24,19 @@ module generateDCT(pixels_0, pixels_1, pixels_2, pixels_3, pixels_4,
 	output Done;
 	
 	reg[7:0] pixels[7:0][7:0];
-	reg[11:0] dct_reg[7:0][7:0];
+	reg[31:0] dct_reg[7:0][7:0];
 	
 	reg[3:0] i;
 
-	reg[11:0] s0[7:0];
-	reg[11:0] s1[7:0]; 
-	reg[11:0] s2[7:0]; 
-	reg[11:0] s3[7:0]; 
+	reg[31:0] s0[7:0];
+	reg[31:0] s1[7:0]; 
+	reg[31:0] s2[7:0]; 
+	reg[31:0] s3[7:0]; 
 
-	reg[11:0] d0[7:0]; 
-	reg[11:0] d1[7:0]; 
-	reg[11:0] d2[7:0]; 
-	reg[11:0] d3[7:0];
+	reg[31:0] d0[7:0]; 
+	reg[31:0] d1[7:0]; 
+	reg[31:0] d2[7:0]; 
+	reg[31:0] d3[7:0];
 
 	reg [6:0] state;
 
@@ -129,52 +129,6 @@ module generateDCT(pixels_0, pixels_1, pixels_2, pixels_3, pixels_4,
 	coeff4 = 12'b000100011100, // 0.27779 * 1024 = 284
 	coeff5 = 12'b000011000100, // 0.19134 * 1024 = 196
 	coeff6 = 12'b000001100100; // 0.09755 * 1024 = 100
-
-	// always (*)
-	// begin
-	// 	for (i=0; i<8; i=i+1)
-	// 	begin
-	// 		s0 = pixels[i][0] + pixels[i][7] - 256;
-	// 		s1 = pixles[i][1] + pixels[i][6] - 256;
-	// 		s2 = pixels[i][2] + pixels[i][5] - 256;
-	// 		s3 = pixles[i][3] + pixles[i][4] - 256;
-
-	// 		d0 = pixels[i][0] - pixels[i][7];
-	// 		d1 = pixles[i][1] - pixels[i][6];
-	// 		d2 = pixels[i][2] - pixels[i][5];
-	// 		d3 = pixels[i][3] - pixels[i][4];
-
-	// 		dct_reg[i][0] = (coeff3*(s0+s1+s2+s3)) >> 10;
-	// 		dct_reg[i][1] = (coeff0*d0+coeff2*d1+coeff4*d2+coeff6*d3) >> 10;
-	// 		dct_reg[i][2] = (coeff1*(s0-s3)+coeff5*(s1-s2)) >> 10;
-	// 		dct_reg[i][3] = (coeff2*d0-coeff6*d1-coeff0*d2-coeff4*d3) >> 10;
-	// 		dct_reg[i][4] = (coeff3*(s0-s1-s2+s3)) >> 10;
-	// 		dct_reg[i][5] = (coeff4*d0-coeff0*d1+coeff6*d2+coeff2*d3) >> 10;
-	// 		dct_reg[i][6] = (coeff5*(s0-s3)+coeff1*(s2-s1)) >> 10;
-	// 		dct_reg[i][7] = (coeff6*d0-coeff4*d1+coeff2*d2-coeff0*d3) >> 10;
-	// 	end
-	// 	for (i=0; i<8; i=i+1)
-	// 	begin
-	// 		s0 = dct_reg[0][i] + dct_reg[7][i];
-	// 		s1 = dct_reg[1][i] + dct_reg[6][i];
-	// 		s2 = dct_reg[2][i] + dct_reg[5][i];
-	// 		s3 = dct_reg[3][i] + dct_reg[4][i];
-
-	// 		d0 = dct_reg[0][i] - dct_reg[7][i];
-	// 		d1 = dct_reg[1][i] - dct_reg[6][i];
-	// 		d2 = dct_reg[2][i] - dct_reg[5][i];
-	// 		d3 = dct_reg[3][i] - dct_reg[4][i];
-
-	// 		dct_reg[0][i] = (coeff3*(s0+s1+s2+s3)) >> 10;
-	// 		dct_reg[1][i] = (coeff0*d0+coeff2*d1+coeff4*d2+coeff6*d3) >> 10;
-	// 		dct_reg[2][i] = (coeff1*(s0-s3)+coeff5*(s1-s2)) >> 10;
-	// 		dct_reg[3][i] = (coeff2*d0-coeff6*d1-coeff0*d2-coeff4*d3) >> 10;
-	// 		dct_reg[4][i] = (coeff3*(s0-s1-s2+s3)) >> 10;
-	// 		dct_reg[5][i] = (coeff4*d0-coeff0*d1+coeff6*d2+coeff2*d3) >> 10;
-	// 		dct_reg[6][i] = (coeff5*(s0-s3)+coeff1*(s2-s1)) >> 10;
-	// 		dct_reg[7][i] = (coeff6*d0-coeff4*d1+coeff2*d2-coeff0*d3) >> 10;
-	// 	end
-	// end
 
 	always @(posedge Clk, posedge Reset)
 	begin
