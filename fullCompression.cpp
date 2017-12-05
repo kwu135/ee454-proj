@@ -550,8 +550,8 @@ Population GenerateCrossoverPopulation(Population initialPopulation, std::vector
 				}
 				if (rand() % 100 < 10) {
 					childQuant[x][y] += (rand() % 20 - 10);
-					if (childQuant[x][y] < 0) {
-						childQuant = 0;
+					if (childQuant[x][y] < 1) {
+						childQuant[x][y] = 1;
 					}
 				}
 			}
@@ -596,15 +596,15 @@ int main(int argc, char** argv) {
   	Population p = generateInitialRandomPopulation();
 	printPopulation(p);
 
-	for (int iteration = 0; iteration < 20; iteration++) {
+	for (int iteration = 0; iteration < 1; iteration++) {
 		vector<pair<int, double> > populationFitness = GeneratePopulationFitness(p, grayscaleArray, height, width, cosine, coefficient);
 		for (int i = 0; i < populationFitness.size(); i++) {
 			cout << i << ": " << populationFitness[i].first << " -- " << populationFitness[i].second << endl;
 		}
 		vector<pair<int, int> > selection = GenerateSelection(p, populationFitness, rng);
-		for (int i = 0; i < selection.size(); i++) {
-			cout << i << ": " << selection[i].first << ", " << selection[i].second << endl;
-		}
+		// for (int i = 0; i < selection.size(); i++) {
+		// 	cout << i << ": " << selection[i].first << ", " << selection[i].second << endl;
+		// }
 		p = GenerateCrossoverPopulation(p, selection);
 		cout << iteration << endl;
 	}
@@ -616,7 +616,7 @@ int main(int argc, char** argv) {
 	for (int i = 0; i < p.quantizationTables.size(); i++) {
 		double fitness = fitnessValueFromQuantizationTable(grayscaleArray, height, width, p.quantizationTables[i], cosine, coefficient);
 		cout << i << ": " << fitness << endl;
-		if (fitness > min_fitness || min_fitness == -1) {
+		if (fitness < min_fitness || min_fitness == -1) {
 			min_fitness_index = i;
 			min_fitness = fitness;
 		}
@@ -692,11 +692,11 @@ int main(int argc, char** argv) {
 	// 	quantizationTable[i] = new int[N];
 	// }
 
-	// for (int i = 0; i < N; i++) {
-	// 	for (int j = 0; j < N; j++) {
-	// 		quantizationTable[i][j] = tempquantizationTable[i][j];
-	// 	}
-	// }
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			quantizationTable[i][j] = tempquantizationTable[i][j];
+		}
+	}
 
 
 	// double fitness = fitnessValueFromQuantizationTable(grayscaleArray, height, width, quantizationTable, cosine, coefficient);
