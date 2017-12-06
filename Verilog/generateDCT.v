@@ -25,6 +25,7 @@ module generateDCT(pixels_0, pixels_1, pixels_2, pixels_3, pixels_4,
 	
 	reg[7:0] pixels[7:0][7:0];
 	reg[31:0] dct_reg[7:0][7:0];
+	reg [31:0] temp[7:0][7:0];
 	
 	reg[3:0] i;
 
@@ -231,14 +232,14 @@ module generateDCT(pixels_0, pixels_1, pixels_2, pixels_3, pixels_4,
 					begin
 						for (i=0; i<8; i=i+1)
 						begin
-							dct_reg[i][0] <= (coeff3*(s0[i]+s1[i]+s2[i]+s3[i])) >> 10;
-							dct_reg[i][1] <= (coeff0*d0[i]+coeff2*d1[i]+coeff4*d2[i]+coeff6*d3[i]) >> 10;
-							dct_reg[i][2] <= (coeff1*(s0[i]-s3[i])+coeff5*(s1[i]-s2[i])) >> 10;
-							dct_reg[i][3] <= (coeff2*d0[i]-coeff6*d1[i]-coeff0*d2[i]-coeff4*d3[i]) >> 10;
-							dct_reg[i][4] <= (coeff3*(s0[i]-s1[i]-s2[i]+s3[i])) >> 10;
-							dct_reg[i][5] <= (coeff4*d0[i]-coeff0*d1[i]+coeff6*d2[i]+coeff2*d3[i]) >> 10;
-							dct_reg[i][6] <= (coeff5*(s0[i]-s3[i])+coeff1*(s2[i]-s1[i])) >> 10;
-							dct_reg[i][7] <= (coeff6*d0[i]-coeff4*d1[i]+coeff2*d2[i]-coeff0*d3[i]) >> 10;
+							dct_reg[i][0] <= (coeff3*(s0[i]+s1[i]+s2[i]+s3[i]));
+							dct_reg[i][1] <= (coeff0*d0[i]+coeff2*d1[i]+coeff4*d2[i]+coeff6*d3[i]);
+							dct_reg[i][2] <= (coeff1*(s0[i]-s3[i])+coeff5*(s1[i]-s2[i]));
+							dct_reg[i][3] <= (coeff2*d0[i]-coeff6*d1[i]-coeff0*d2[i]-coeff4*d3[i]);
+							dct_reg[i][4] <= (coeff3*(s0[i]-s1[i]-s2[i]+s3[i]));
+							dct_reg[i][5] <= (coeff4*d0[i]-coeff0*d1[i]+coeff6*d2[i]+coeff2*d3[i]);
+							dct_reg[i][6] <= (coeff5*(s0[i]-s3[i])+coeff1*(s2[i]-s1[i]));
+							dct_reg[i][7] <= (coeff6*d0[i]-coeff4*d1[i]+coeff2*d2[i]-coeff0*d3[i]);
 						end
 						state <= COLSD;
 					end
@@ -262,14 +263,55 @@ module generateDCT(pixels_0, pixels_1, pixels_2, pixels_3, pixels_4,
 					begin
 						for (i=0; i<8; i=i+1)
 						begin
-							dct_reg[0][i] <= (coeff3*(s0[i]+s1[i]+s2[i]+s3[i])) >> 10;
-							dct_reg[1][i] <= (coeff0*d0[i]+coeff2*d1[i]+coeff4*d2[i]+coeff6*d3[i]) >> 10;
-							dct_reg[2][i] <= (coeff1*(s0[i]-s3[i])+coeff5*(s1[i]-s2[i])) >> 10;
-							dct_reg[3][i] <= (coeff2*d0[i]-coeff6*d1[i]-coeff0*d2[i]-coeff4*d3[i]) >> 10;
-							dct_reg[4][i] <= (coeff3*(s0[i]-s1[i]-s2[i]+s3[i])) >> 10;
-							dct_reg[5][i] <= (coeff4*d0[i]-coeff0*d1[i]+coeff6*d2[i]+coeff2*d3[i]) >> 10;
-							dct_reg[6][i] <= (coeff5*(s0[i]-s3[i])+coeff1*(s2[i]-s1[i])) >> 10;
-							dct_reg[7][i] <= (coeff6*d0[i]-coeff4*d1[i]+coeff2*d2[i]-coeff0*d3[i]) >> 10;
+							/*dct_reg[0][i] = (coeff3*(s0[i]+s1[i]+s2[i]+s3[i])) >> 20;
+							dct_reg[1][i] = (coeff0*d0[i]+coeff2*d1[i]+coeff4*d2[i]+coeff6*d3[i]) >> 20;
+							dct_reg[2][i] = (coeff1*(s0[i]-s3[i])+coeff5*(s1[i]-s2[i])) >> 20;
+							dct_reg[3][i] = (coeff2*d0[i]-coeff6*d1[i]-coeff0*d2[i]-coeff4*d3[i]) >> 20;
+							dct_reg[4][i] = (coeff3*(s0[i]-s1[i]-s2[i]+s3[i])) >> 20;
+							dct_reg[5][i] = (coeff4*d0[i]-coeff0*d1[i]+coeff6*d2[i]+coeff2*d3[i]) >> 20;
+							dct_reg[6][i] = (coeff5*(s0[i]-s3[i])+coeff1*(s2[i]-s1[i])) >> 20;
+							dct_reg[7][i] = (coeff6*d0[i]-coeff4*d1[i]+coeff2*d2[i]-coeff0*d3[i]) >> 20;*/
+							temp[0][i] = (coeff3*(s0[i]+s1[i]+s2[i]+s3[i]));
+							temp[1][i] = (coeff0*d0[i]+coeff2*d1[i]+coeff4*d2[i]+coeff6*d3[i]);
+							temp[2][i] = (coeff1*(s0[i]-s3[i])+coeff5*(s1[i]-s2[i]));
+							temp[3][i] = (coeff2*d0[i]-coeff6*d1[i]-coeff0*d2[i]-coeff4*d3[i]);
+							temp[4][i] = (coeff3*(s0[i]-s1[i]-s2[i]+s3[i]));
+							temp[5][i] = (coeff4*d0[i]-coeff0*d1[i]+coeff6*d2[i]+coeff2*d3[i]);
+							temp[6][i] = (coeff5*(s0[i]-s3[i])+coeff1*(s2[i]-s1[i]));
+							temp[7][i] = (coeff6*d0[i]-coeff4*d1[i]+coeff2*d2[i]-coeff0*d3[i]);
+
+							if(temp[0][i] > -1048576)
+								dct_reg[0][i] <= 0;
+							else
+								dct_reg[0][i] <= temp[0][i] >> 20;
+							if(temp[1][i] > -1048576)
+								dct_reg[1][i] <= 0;
+							else
+								dct_reg[1][i] <= temp[1][i] >> 20;
+							if(temp[2][i] > -1048576)
+								dct_reg[2][i] <= 0;
+							else
+								dct_reg[2][i] <= temp[2][i] >> 20;
+							if(temp[3][i] > -1048576)
+								dct_reg[3][i] <= 0;
+							else
+								dct_reg[3][i] <= temp[3][i] >> 20;
+							if(temp[4][i] > -1048576)
+								dct_reg[4][i] <= 0;
+							else
+								dct_reg[4][i] <= temp[4][i] >> 20;
+							if(temp[5][i] > -1048576)
+								dct_reg[5][i] <= 0;
+							else
+								dct_reg[5][i] <= temp[5][i] >> 20;
+							if(temp[6][i] > -1048576)
+								dct_reg[6][i] <= 0;
+							else
+								dct_reg[6][i] <= temp[6][i] >> 20;
+							if(temp[7][i] > -1048576)
+								dct_reg[7][i] <= 0;
+							else
+								dct_reg[7][i] <= temp[7][i] >> 20;
 						end
 						state <= DONE;
 					end
