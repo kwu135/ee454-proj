@@ -8,6 +8,6 @@
 using namespace std;
 
 vector<bool> HuffmanEncode(int** pixels);
-vector<unsigned char> ConvertQuantizationHeader(int quant[N][N]);
+vector<unsigned char> ConvertQuantizationHeader(int** quant);
 vector<unsigned char> GetHuffmanAC();
 vector<unsigned char> GetHuffmanDC();

@@ -258,7 +258,7 @@ int** UnZigZagMatrix(int* m) {
 	return unzigzag;
 }
 
-vector<unsigned char> ConvertQuantizationHeader(int quant[N][N])
+vector<unsigned char> ConvertQuantizationHeader(int** quant)
 {
 	vector<unsigned char> header;
 	int** q = new int*[N];
